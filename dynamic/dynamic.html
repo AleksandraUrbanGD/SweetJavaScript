@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Poppins:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: black;
+        font-family: "Poppins", sans-serif;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      ul {
+        list-style: none;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      /* popup */
+      .popup-area {
+        padding: 30px;
+      }
+
+      .btnModalOpen {
+        background-color: #a07789;
+        border: #a07789;
+        padding: 10px 20px;
+        color: #462929;
+      }
+
+      .btnModalOpen:hover {
+        color: #ffffff;
+      }
+
+      .modal {
+        position: fixed;
+        display: none;
+        max-width: 500px;
+        border: 2px solid rgb(178, 70, 88);
+        padding: 10px;
+        z-index: 10;
+        background-color: #faeaea;
+      }
+      .modal.active {
+        display: block;
+        position: absolute;
+        top: 200px;
+        left: 500px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 25px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .close-button {
+        font-size: 20px;
+        font-weight: 800;
+        padding: 1px 5px 1px 5px;
+        background-color: var(--white);
+        border: none;
+        border-radius: 20%;
+        cursor: pointer;
+      }
+
+      .overlay {
+        position: fixed;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      }
+
+      .overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      /* gallery */
+      .container-gallery {
+        margin: 0 auto;
+        max-width: 690px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        background-color: #4e4d52;
+        padding: 20px;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .box-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 100px;
+      }
+
+      .btn {
+        background-color: #a07789;
+        border: #a07789;
+        padding: 10px 20px;
+        color: #462929;
+      }
+
+      .btn:hover {
+        color: #ffffff;
+      }
+
+      .galerry-img {
+        width: 200px;
+        height: 200px;
+      }
+
+      /* slider */
+      .slider-area {
+        padding-bottom: 30px;
+      }
+
+      .image-slider {
+        margin: 0 auto;
+        max-width: 700px;
+        min-height: 500px;
+        position: relative;
+        background-image: url(img/krajobraz.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        transition: 0.3s;
+      }
+
+      .caption {
+        background: linear-gradient(rgba(0, 0, 0, 0), #000);
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        color: rgb(164, 164, 164);
+        width: 100%;
+        text-align: center;
+        padding: 30px;
+      }
+
+      .caption h1 {
+        color: rgb(176, 166, 166);
+      }
+
+      .arrow-left,
+      .arrow-right {
+        position: absolute;
+        font-size: 20px;
+        font-weight: 800;
+        padding: 5px 10px 5px 10px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.2);
+        color: rgb(176, 166, 166);
+        top: 40%;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .arrow-left:hover,
+      .arrow-right:hover {
+        box-shadow: 0 0 10px black;
+      }
+
+      .arrow-left {
+        left: 10px;
+      }
+
+      .arrow-right {
+        right: 10px;
+      }
+
+      .image-fade {
+        animation: imgFade 0.5s ease-in-out;
+      }
+
+      @keyframes imgFade {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .tittle-modal {
+        color: rgb(178, 70, 88);
+        padding-left: 70px;
+      }
+      .contact-list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+        padding: 10px 200px;
+      }
+
+      .contact-links:hover {
+        color: rgb(178, 70, 88);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="popup-area">
+        <button id="btnModalOpen" class="btnModalOpen">click me</button>
+        <div class="btn-icon-arrow">
+          <i class="fa-solid fa-arrow-right-long"></i>
+          <div class="overlay" id="overlay"></div>
+        </div>
+        <div class="modal" id="modal">
+          <div class="modal-header">
+            <p class="tittle-modal">Aleksandra Urban</p>
+            <button id="closeButton" class="close-button">&times;</button>
+          </div>
+          <div class="modal-body">
+            In October 2022, I completed a 116-hour practical course "Software
+            Tester" at the SDA academy. In the process, I am starting another
+            one and from July 2022 I am exploring the secrets of HTML + CSS +
+            Java Script under the guidance of a mentor from the PolDevs academy.
+            My experience resulting from 5 years of activity resulted in a high
+            level of discipline, and thus the ability to manage time, good
+            organization of work and consistent pursuit of the goal.
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="container-gallery" id="containerGallery">
+        <div class="galerry-img">
+          <img
+            src="https://img.freepik.com/darmowe-zdjecie/czekoladowe-ciasteczka-z-kawalkami-czekolady_144627-37361.jpg?t=st=1686227640~exp=1686228240~hmac=ad82eb2e9f1203621f583d19c636754219596def39c1a62bc76415b12c69cb14"
+            alt="ice cream"
+          />
+        </div>
+        <div class="galerry-img">
+          <img
+            src="https://img.freepik.com/darmowe-zdjecie/smaczny-gofr-z-jagodami-i-truskawkami_144627-33269.jpg?t=st=1686227589~exp=1686228189~hmac=a44f354bb2255704fe0ce57250345569702fddd82bb2db2081de1b3dffa72987"
+            alt="cake with raspberry"
+          />
+        </div>
+        <div class="galerry-img">
+          <img
+            src="https://img.freepik.com/premium-zdjecie/stol-z-babeczkami-i-talerzem-ciasteczek-oreo_328859-624.jpg?size=626&ext=jpg"
+            alt="chocolate pralines"
+          />
+        </div>
+        <div class="galerry-img">
+          <img
+            src="https://img.freepik.com/darmowe-zdjecie/widok-z-gory-pyszny-deser-gotowy-do-podania_23-2148622360.jpg"
+            alt="chocolate tart"
+          />
+        </div>
+        <div class="galerry-img">
+          <img
+            src="https://img.freepik.com/darmowe-zdjecie/aranzacja-pysznych-czekoladowych-slodyczy_23-2148875589.jpg"
+            alt="chocolate cake"
+          />
+        </div>
+        <div class="galerry-img">
+          <img
+            src="https://img.freepik.com/darmowe-zdjecie/widok-z-gory-smaczne-ciasto-z-truskawkami-na-talerzu_23-2148622354.jpg"
+            alt="chocolate cake"
+          />
+        </div>
+      </div>
+      <div class="box-buttons">
+        <button class="btn" id="btnOneColumn">1 kolumna</button>
+        <button class="btn" id="btnTwoColumns">2 kolumny</button>
+        <button class="btn" id="btnThreeColumns">3 kolumny</button>
+      </div>
+      <div class="slider-area">
+        <section class="image-slider">
+          <div class="arrow-left"><</div>
+          <div class="arrow-right">></div>
+
+          <div class="caption">
+            <h1>slide 1</h1>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer>
+      <div>
+        <ul class="contact-list">
+          <li>
+            <a class="contact-links" href="mailto:aleksandra.urban93@gmail.com"
+              >aleksandra.urban93@gmail.com</a
+            >
+          </li>
+          <li>
+            <a
+              class="contact-links"
+              href="https://www.linkedin.com/in/olaurban/"
+              >Linkedin - profil</a
+            >
+          </li>
+          <li>
+            <a class="contact-links" href="https://github.com/AleksandraUrbanGD"
+              >Repository - link</a
+            >
+          </li>
+        </ul>
+      </div>
+    </footer>
+    <script>
+      // gallery
+      const buttons = document.querySelectorAll(".btn");
+      const windowWidth = document.querySelector("#containerGallery");
+
+      buttons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+          windowWidth.style.maxWidth = `${(index + 1) * 230}px`;
+        });
+
+        // slider
+      });
+      const slider = document.querySelector(".image-slider");
+      const arrLeft = document.querySelector(".arrow-left");
+      const arrRight = document.querySelector(".arrow-right");
+      const heading = document.querySelector(".caption h1");
+      const description = document.querySelector(".caption p");
+      const images = [
+        "https://img.freepik.com/darmowe-zdjecie/czekoladowy-wulkan-posypany-cukrem-pudrem_140725-9383.jpg?t=st=1686920013~exp=1686920613~hmac=41e01ac784196894e9bbcb1446221797ff06a625a0c2e9bbab30d83ad4bd8a42",
+        "https://img.freepik.com/darmowe-zdjecie/zblizenie-koncepcji-ciasto-czekoladowe_23-2148746724.jpg",
+        "https://img.freepik.com/darmowe-zdjecie/zblizenie-pyszne-babeczki-czekoladowe-z-malinami_23-2148746671.jpg",
+      ];
+      const headings = ["slide 1", "slide 2", "slide 3"];
+      const descriptions = [
+        " Lorem ipsum dolor, sit amet consectetur adipisicing elit. ",
+        " Alias voluptas eos, dolore earum eveniet.",
+        " Alias vvero aspernatur quo et nisi.",
+      ];
+
+      let id = 0;
+
+      function slide(id) {
+        slider.style.backgroundImage = `url(${images[id]})`;
+        slider.classList.add("image-fade");
+        setTimeout(() => {
+          slider.classList.remove("image-fade");
+        }, 550);
+        heading.innerText = headings[id];
+        description.innerText = descriptions[id];
+      }
+      arrLeft.addEventListener("click", () => {
+        id--;
+        if (id < 0) {
+          id = images.length - 1;
+        }
+        slide(id);
+      });
+
+      arrRight.addEventListener("click", () => {
+        id++;
+        if (id > images.length - 1) {
+          id = 0;
+        }
+        slide(id);
+      });
+      slide(id);
+
+      //popup
+
+      const openModalButton = document.querySelector("#btnModalOpen");
+      const closeModalButton = document.querySelector("#closeButton");
+      const overlay = document.querySelector("#overlay");
+      const modal = document.querySelector(".modal");
+      function openModal() {
+        if (!modal) return;
+        modal.classList.add("active");
+        overlay.classList.add("active");
+      }
+
+      function closeModal() {
+        modal.classList.remove("active");
+        overlay.classList.remove("active");
+      }
+
+      openModalButton.addEventListener("click", () => {
+        openModal(modal);
+      });
+
+      closeModalButton.addEventListener("click", () => {
+        closeModal(modal);
+      });
+
+      overlay.addEventListener("click", () => {
+        closeModal(modal);
+      });
+    </script>
+  </body>
+</html>
